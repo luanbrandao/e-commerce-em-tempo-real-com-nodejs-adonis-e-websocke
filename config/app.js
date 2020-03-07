@@ -188,7 +188,8 @@ module.exports = {
     | Available drivers are: `file` and `console`.
     |
     */
-    transport: 'console',
+    // transport: 'console',
+    transport: 'file',
 
     /*
     |--------------------------------------------------------------------------
@@ -218,8 +219,8 @@ module.exports = {
     */
     file: {
       driver: 'file',
-      name: 'adonis-app',
-      filename: 'adonis.log',
+      name: 'ecommerce-realtime',
+      file:"ecommerce-error.log",
       level: 'info'
     }
   },
