@@ -1,3 +1,12 @@
+# Plugins
+```
+adonis install @adonisjs/mail
+adonis install @adonisjs/validator
+adonis install @adonisjs/websocket
+adonis install adonis-acl
+adonis install adonis-bumblebee
+
+```
 # Adonis API application
 
 This is the boilerplate for creating an API server in AdonisJs, it comes pre-configured with.
