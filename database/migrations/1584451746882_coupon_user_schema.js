@@ -12,9 +12,11 @@ class CouponUserSchema extends Schema {
 
       table.timestamps()
 
-
-      table.foreign('coupon_id')
-      .references('id').inTable('counpos').onDelete('cascade')
+      table
+      .foreign('coupon_id')
+      .references('id')
+      .inTable('coupons')
+      .onDelete('cascade')
 
 
       table.foreign('user_id')

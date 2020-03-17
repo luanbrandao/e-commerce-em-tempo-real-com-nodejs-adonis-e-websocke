@@ -14,12 +14,12 @@ class CategorySchema extends Schema {
       table.timestamps()
 
       table.foreign('image_id')
-      .rederences('id')
+      .references('id')
       .inTable('images')
       .onDelete('cascade')
 
-      table.foreign('order_id')
-      .references('id').inTable('orders').onDelete('cascade')
+      // table.foreign('order_id')
+      // .references('id').inTable('orders').onDelete('cascade')
 
     })
   }
