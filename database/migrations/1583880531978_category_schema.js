@@ -18,6 +18,9 @@ class CategorySchema extends Schema {
       .inTable('images')
       .onDelete('cascade')
 
+      table.foreign('order_id')
+      .references('id').inTable('orders').onDelete('cascade')
+
     })
   }
 

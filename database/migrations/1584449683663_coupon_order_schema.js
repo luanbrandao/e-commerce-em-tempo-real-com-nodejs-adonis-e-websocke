@@ -17,7 +17,14 @@ class CouponOrderSchema extends Schema {
 
       table.foreign('order_id')
       .references('id').inTable('orders').onDelete('cascade')
+
+      table.foreign('product_id')
+      .references('id')
+      .inTable('products')
+      .onDelete('cascade')
     })
+
+
   }
 
   down () {
