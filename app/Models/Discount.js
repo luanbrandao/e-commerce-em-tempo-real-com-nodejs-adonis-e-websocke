@@ -12,12 +12,15 @@ class Discount extends Model {
 
   order(){
     // 1 - o model relacionado
-    // 2 - o campo na tabela
-    // 3 - a chave estrangeira
+    // 2 - o campo na tabela COUPON_ORDER que e o ORDER_ID
+    // 3 - a chave estrangeira que ta na tabela ORDER que e o ID
     return this.belongsTo('App/Models/Order','order_id','id');
   }
 
   coupon(){
+    // 1 - o model relacionado
+    // 2 - o campo na tabela COUPON_ORDER que e o COUPON_ID
+    // 3 - a chave estrangeira que ta na tabela COUPON que e o ID
     return this.belongsTo('App/Models/Coupon','coupon_id','id')
   }
 
