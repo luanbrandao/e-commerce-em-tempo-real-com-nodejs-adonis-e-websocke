@@ -10,6 +10,7 @@ class Image extends Model {
   static get computed(){
     return ['url']
   }
+  // campo virtual
   getUrl({path})  {
     return `${Env.get('APP_URL')}/imagens/${path}`
   }

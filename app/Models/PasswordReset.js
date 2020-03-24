@@ -20,6 +20,7 @@ class PasswordReset extends Model {
 
   // trata antes de salvar e apresetar os dados
   // formata os valores para o padrão do MYSQL
+  // informa pro adonis os campos do tipo date
   static get dates(){
     return ['created_at','updated_at','expires_at']
   }
