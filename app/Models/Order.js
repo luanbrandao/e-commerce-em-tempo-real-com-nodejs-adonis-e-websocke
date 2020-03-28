@@ -5,6 +5,14 @@ const Model = use('Model')
 
 class Order extends Model {
 
+  static boot() {
+    super.boot()
+
+    this.addHook('afterFind', 'OrderHook.updateValues')
+    // afterPaginate, manda um array
+    this.addHook('afterPaginate', 'OrderHook.updateCollectionValues')
+  }
+
 // informa que a tabela não tem o campo timesTamp
   static get traits () {
     return ['App/Models/Traits/NoTimestamp']
