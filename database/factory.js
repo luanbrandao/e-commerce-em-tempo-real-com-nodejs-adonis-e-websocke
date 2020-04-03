@@ -17,7 +17,7 @@ const Factory = use('Factory')
 
 Factory.blueprint('App/Models/User', (faker) => {
   return {
-    username: faker.first(),
+    name: faker.first(),
     surname: faker.last(),
     email: faker.email({ domain: 'gmail.com.br' }),
     password: 'adsfasdf'
