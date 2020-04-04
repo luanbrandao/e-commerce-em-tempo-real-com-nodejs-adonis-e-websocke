@@ -14,7 +14,7 @@
         "dev"
       ],
       "port":9229,
-      "internalConsoleOptions": "openOnSessionStart"
+      "internalConsoleOptions": "neverOpen"
 
     }
   ]
