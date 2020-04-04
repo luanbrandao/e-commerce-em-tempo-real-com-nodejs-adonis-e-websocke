@@ -14,13 +14,14 @@ class AuthController {
       const { name, surname, email, password } = request.all()
       const user = await User.create({ name, surname, email, password } , trx )
 
-      const userRole = await Role.finBy('slug', 'client')
+      const userRole = await Role.findBy('slug', 'client')
 
       await user.roles().attach( [userRole.id] , null, trx )
 
       await trx.commit()
 
       return response.status(201).send({ data : user })
+      // return response.status(201).send({ data : {name, surname, email, password} })
 
     } catch (error) {
 
@@ -67,6 +68,7 @@ class AuthController {
     if( !refresh_token ) {
        refresh_token = request.header('refresh_token')
     }
+
 
     //true, deleta o token da base de dados
     await auth.authenticator('jwt').revokeTokens([refresh_token] ,true)
