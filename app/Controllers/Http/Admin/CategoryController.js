@@ -26,10 +26,19 @@ class CategoryController {
     // const limit = request.input('limit')
     // const catagories = await Category.query().paginate(page , limit );
 
-    const page = request.input('page')
-    const limit = request.input('limit')
+    const  title  = request.input('title')
 
-    const catagories = await Category.query().paginate(pagination.page , pagination.limit );
+    const query = Category.query()
+
+    if( title ) {
+      // query.where('title', 'LIKE' , `%${title}%` )
+
+      // no postgres e ILIKE
+      query.where('title', 'ILIKE' , `%${title}%` )
+      // query.whereRaw(`title ILIKE '%Moldova%' `)
+
+    }
+    const catagories = await query.paginate(pagination.page , pagination.limit );
 
     return response.send(catagories)
 
