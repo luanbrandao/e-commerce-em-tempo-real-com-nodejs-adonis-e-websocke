@@ -10,6 +10,11 @@
 
  const Image = use('App/Models/Image')
 
+const { manage_single_upload, manage_mutiple_uploads } =
+ use('App/Helpers')
+
+
+
 class ImageController {
   /**
    * Show a list of all images.
@@ -27,17 +32,6 @@ class ImageController {
     return response.send(imagens)
   }
 
-  /**
-   * Render a form to be used for creating a new image.
-   * GET images/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
-  }
 
   /**
    * Create/save a new image.
@@ -48,6 +42,48 @@ class ImageController {
    * @param {Response} ctx.response
    */
   async store ({ request, response }) {
+
+    try {
+
+      // captura uma image ou mais do request
+      const fileJar = request.file('images', {
+        types: ['image'],
+        size: '2mb'
+      })
+
+      // retorno pro usuário
+      let images = []
+      // caso seja um unico arquivo - manage_single_upload
+      //caso seja vários arquivos - namage_multiple_uploads
+      if( !FileListJar.files ) {
+
+        const file = await manage_single_uplload(fileJar)
+        //precisa verificar novamento se tem multilpos arquivos
+        if( file.moved() ) {
+          const Image = await Image.create({
+            path: file.fileName,
+            size: file.size,
+            original_name : file.clientName,
+            extension: file.subtype
+
+          })
+
+          imagens.push(image)
+
+          return response.status(201).send({
+            successes: images,
+            errors: {}
+          })
+
+        }
+
+      }
+
+
+    } catch (error) {
+
+    }
+
   }
 
   /**
