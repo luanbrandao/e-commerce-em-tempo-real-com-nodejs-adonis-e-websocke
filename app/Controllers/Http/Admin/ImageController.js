@@ -54,10 +54,10 @@ class ImageController {
       // retorno pro usuário
       let images = []
       // caso seja um unico arquivo - manage_single_upload
-      //caso seja vários arquivos - namage_multiple_uploads
-      if( !FileListJar.files ) {
+      //caso seja vários arquivos - manage_multiple_uploads
+      if( !fileJar.files ) {
 
-        const file = await manage_single_uplload(fileJar)
+        const file = await manage_single_upload(fileJar)
         //precisa verificar novamento se tem multilpos arquivos
         if( file.moved() ) {
           const Image = await Image.create({
@@ -75,13 +75,38 @@ class ImageController {
             errors: {}
           })
 
+
+
         }
+
+
+        return response.status(400).send({
+          message: 'Não foi possível processar está imagem no momento'
+        })
+
+
 
       }
 
+      let files = manage_mutiple_uploads(fileJar)
+
+      await Promise.all(
+        files.successes.map( async file => {
+          const image = await Image.create({
+            path: file.fileName,
+            size: file.size,
+            original_name: file.clientName,
+            extension: file.subtype
+          })
+          images.push(image)
+        })
+      )
+
+      return response.status(201).send( {successes: images, errors: files.errors })
 
     } catch (error) {
-
+      return response.status(400)
+      .send({ message: 'Não foi possível processar sua solicitação'})
     }
 
   }
