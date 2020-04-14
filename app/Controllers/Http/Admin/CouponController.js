@@ -77,9 +77,39 @@ class CouponController {
 
        // starts service layer
        const service = new Service(coupon , trx)
+       // insere os relacionamentos o DB
+       if( users && users.length > 0) {
+        await service.syncUsers(users)
+        // utilizado por usuários específicos
+        can_user_for.client = true
+       }
+
+       if( products && products.length > 0) {
+        await service.syncProducts(products)
+        // utilizado por produtos específicos
+        can_user_for.product = true
+       }
+
+       if( can_user_for.product && can_user_for.client ) {
+         coupon.can_user_for = 'product_client'
+       } else if( can_user_for.product && !can_user_for.client ) {
+        coupon.can_user_for = 'product'
+
+       } else if( !can_user_for.product && can_user_for.client ) {
+        coupon.can_user_for = 'client'
+       } else {
+        coupon.can_user_for = 'all'
+       }
+
+       await coupon.save(trx)
+       await trx.commit()
+       return response.status(201).send(coupon)
 
      } catch (error) {
-
+      await trx.rollback()
+      return response.status(400).send({
+        message: 'Não foi possível criar o cupom no momento'
+      })
      }
 
 
