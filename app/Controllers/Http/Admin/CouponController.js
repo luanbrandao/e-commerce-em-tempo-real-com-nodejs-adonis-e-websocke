@@ -137,7 +137,71 @@ class CouponController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update ({ params: { id }, request, response }) {
+    const trx = await Database.beginTransaction()
+
+    var coupon = await Coupon.findOrFail(id)
+
+    var can_user_for = {
+      client: false,
+      product: false
+    }
+
+    try {
+
+      const couponData = request.only([
+        'code',
+        'discount',
+        'valid_from',
+        'valid_until',
+        'quantity',
+        'type',
+        'recursive'
+       ])
+
+      coupon.merge(couponData)
+
+      const { users , products } = request.only([ 'users' , 'products' ])
+      // starts service layer
+      const service = new Service(coupon , trx)
+
+       // insere os relacionamentos o DB
+       if( users && users.length > 0) {
+        await service.syncUsers(users)
+        // utilizado por usuários específicos
+        can_user_for.client = true
+       }
+
+       if( products && products.length > 0) {
+        await service.syncProducts(products)
+        // utilizado por produtos específicos
+        can_user_for.product = true
+       }
+
+       if( can_user_for.product && can_user_for.client ) {
+         coupon.can_user_for = 'product_client'
+       } else if( can_user_for.product && !can_user_for.client ) {
+        coupon.can_user_for = 'product'
+
+       } else if( !can_user_for.product && can_user_for.client ) {
+        coupon.can_user_for = 'client'
+       } else {
+        coupon.can_user_for = 'all'
+       }
+
+       await coupon.save(trx);
+       await trx.commit()
+
+       return response.send(coupon)
+
+
+    } catch (error) {
+      await trx.rollback()
+      return response.status(400).send({
+        message: 'Não foi possível atualzar esse cupom no momento!'
+      })
+    }
+
   }
 
   /**
