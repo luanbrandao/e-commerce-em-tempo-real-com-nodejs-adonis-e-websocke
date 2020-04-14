@@ -6,6 +6,7 @@
 
 const Coupon = use('App/Models/Coupon')
 const Database = use('Database')
+const Service = use('App/Services/Coupon/CouponService')
 /**
  * Resourceful controller for interacting with coupons
  */
@@ -48,9 +49,40 @@ class CouponController {
      *  1 - produto - pode ser utilizado apenas em produtos específicos
      *  2 - clients - pode ser utilizado apenas por clientes específicos
      *  3 - clients e products - pode ser utilizado somente em produtos
-     * e clientes especificos
+     *      e clientes especificos
      *  4 - pode ser utilizado por qualquer cliente em qualquer pedido
      */
+
+    const trx = await Database.beginTransaction()
+
+     var can_user_for = {
+       client: false,
+       product: false
+     }
+
+     try {
+
+      const couponData = request.only([
+        'code',
+        'discount',
+        'valid_from',
+        'valid_until',
+        'quantity',
+        'type',
+        'recursive'
+       ])
+
+       const { users , products } = request.only([ 'users' , 'products' ])
+       const coupon = await Coupon.create( couponData , trx)
+
+       // starts service layer
+       const service = new Service(coupon , trx)
+
+     } catch (error) {
+
+     }
+
+
    }
 
   /**
