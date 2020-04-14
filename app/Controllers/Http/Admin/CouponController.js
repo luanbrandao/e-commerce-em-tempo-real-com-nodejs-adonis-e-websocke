@@ -44,7 +44,14 @@ class CouponController {
    * @param {Response} ctx.response
    */
   async store ({ request, response }) {
-  }
+    /**
+     *  1 - produto - pode ser utilizado apenas em produtos específicos
+     *  2 - clients - pode ser utilizado apenas por clientes específicos
+     *  3 - clients e products - pode ser utilizado somente em produtos
+     * e clientes especificos
+     *  4 - pode ser utilizado por qualquer cliente em qualquer pedido
+     */
+   }
 
   /**
    * Display a single coupon.
