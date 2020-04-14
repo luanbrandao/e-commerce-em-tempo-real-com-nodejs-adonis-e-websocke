@@ -5,7 +5,7 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 const Coupon = use('App/Models/Coupon')
-
+const Database = use('Database')
 /**
  * Resourceful controller for interacting with coupons
  */
@@ -34,18 +34,6 @@ class CouponController {
     return response.send(coupons)
   }
 
-  /**
-   * Render a form to be used for creating a new coupon.
-   * GET coupons/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
-
-  }
 
   /**
    * Create/save a new coupon.
@@ -67,19 +55,9 @@ class CouponController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
-  }
-
-  /**
-   * Render a form to update an existing coupon.
-   * GET coupons/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
+  async show ({ params: {id }, request, response, view }) {
+    const coupon = await Coupon.findOrFail(id)
+    return response.send(coupon)
   }
 
   /**
@@ -101,7 +79,28 @@ class CouponController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy ({ params: { id }, request, response }) {
+    // relacionado com pedidos, usuários e produtos
+    const trx = await Database.beginTransaction()
+    const coupon = await Coupon.findOrFail(id)
+
+    try {
+      // remove os relacionamentos
+      await coupon.products().detach([], trx)
+      await coupon.orders().detach([],trx)
+      await coupon.users().detach([],trx)
+
+      await trx.commit()
+
+      await coupon.delete(trx);
+      return response.status(204).send()
+
+    } catch (error) {
+      await trx.rollback()
+      return response.status(400).send({
+        message: "Não foi possível deletar esse cupom no momento"
+      })
+    }
   }
 }
 
