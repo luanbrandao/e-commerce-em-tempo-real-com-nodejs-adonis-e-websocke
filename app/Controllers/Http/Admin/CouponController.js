@@ -55,7 +55,7 @@ class CouponController {
 
     const trx = await Database.beginTransaction()
 
-     var can_user_for = {
+     var can_use_for = {
        client: false,
        product: false
      }
@@ -81,24 +81,24 @@ class CouponController {
        if( users && users.length > 0) {
         await service.syncUsers(users)
         // utilizado por usuários específicos
-        can_user_for.client = true
+        can_use_for.client = true
        }
 
        if( products && products.length > 0) {
         await service.syncProducts(products)
         // utilizado por produtos específicos
-        can_user_for.product = true
+        can_use_for.product = true
        }
 
-       if( can_user_for.product && can_user_for.client ) {
-         coupon.can_user_for = 'product_client'
-       } else if( can_user_for.product && !can_user_for.client ) {
-        coupon.can_user_for = 'product'
+       if( can_use_for.product && can_use_for.client ) {
+         coupon.can_use_for = 'product_client'
+       } else if( can_use_for.product && !can_use_for.client ) {
+        coupon.can_use_for = 'product'
 
-       } else if( !can_user_for.product && can_user_for.client ) {
-        coupon.can_user_for = 'client'
+       } else if( !can_use_for.product && can_use_for.client ) {
+        coupon.can_use_for = 'client'
        } else {
-        coupon.can_user_for = 'all'
+        coupon.can_use_for = 'all'
        }
 
        await coupon.save(trx)
@@ -142,7 +142,7 @@ class CouponController {
 
     var coupon = await Coupon.findOrFail(id)
 
-    var can_user_for = {
+    var can_use_for = {
       client: false,
       product: false
     }
@@ -169,24 +169,24 @@ class CouponController {
        if( users && users.length > 0) {
         await service.syncUsers(users)
         // utilizado por usuários específicos
-        can_user_for.client = true
+        can_use_for.client = true
        }
 
        if( products && products.length > 0) {
         await service.syncProducts(products)
         // utilizado por produtos específicos
-        can_user_for.product = true
+        can_use_for.product = true
        }
 
-       if( can_user_for.product && can_user_for.client ) {
-         coupon.can_user_for = 'product_client'
-       } else if( can_user_for.product && !can_user_for.client ) {
-        coupon.can_user_for = 'product'
+       if( can_use_for.product && can_use_for.client ) {
+         coupon.can_use_for = 'product_client'
+       } else if( can_use_for.product && !can_use_for.client ) {
+        coupon.can_use_for = 'product'
 
-       } else if( !can_user_for.product && can_user_for.client ) {
-        coupon.can_user_for = 'client'
+       } else if( !can_use_for.product && can_use_for.client ) {
+        coupon.can_use_for = 'client'
        } else {
-        coupon.can_user_for = 'all'
+        coupon.can_use_for = 'all'
        }
 
        await coupon.save(trx);

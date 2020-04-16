@@ -5,10 +5,21 @@ const Model = use('Model')
 
 class Discount extends Model {
 
+  static boot() {
+    super.boot()
+
+    this.addHook('beforeSave','DiscountHook.calculateValues')
+    // diminui a quantidade de cupons disponíveis
+    this.addHook('afterSave' ,'DiscountHook.decrementCoupons')
+    this.addHook('afterDelete' ,'DiscountHook.incrementCoupons')
+  }
+
   static get table(){
     //
     return 'coupon_order'
   }
+
+  // atualizar os valores as tabelas, fazer os cálculos automaticamente
 
   order(){
     // 1 - o model relacionado
