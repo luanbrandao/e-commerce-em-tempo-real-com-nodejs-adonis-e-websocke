@@ -41,7 +41,20 @@ class OrderSerevice {
 
   }
 
-  async canApplyDiscount( counpon ) {
+  async canApplyDiscount( coupon ) {
+
+    // verifica a validade por data
+    const now = new Date().getTime();
+
+    if(
+      now > coupon.valid_from.getTime() ||
+        ( typeof coupon.valid_until == 'object' && coupon.valid_until.getTime() < now ) ){
+          // verifica se o cupom já entrou em validade
+          // verifica se há uma data de expiração
+          // se hover data de expiração, verifica se o cupom expirou
+          return false
+    }
+
     const couponProducts = await Database
     .from('coupon_products')
     .where(coupon_id , coupon.id)
