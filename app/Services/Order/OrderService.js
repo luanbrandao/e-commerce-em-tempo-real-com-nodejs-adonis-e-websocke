@@ -32,11 +32,11 @@ class OrderSerevice {
 
     // Atualiza os valores e quantidade
     await Promise.all( currentItems.rows.map( async item => {
-      //fill, preenche o item 
+      //fill, preenche o item
       item.fill( items.find( n => n.id === item.id))
 
       await item.save(this.trx)
-      
+
     }))
 
   }
