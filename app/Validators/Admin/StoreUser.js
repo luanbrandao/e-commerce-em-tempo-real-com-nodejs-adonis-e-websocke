@@ -1,7 +1,13 @@
 'use strict'
 
 class AdminStoreUser {
+
+  get validateAll () {
+    return true
+  }
+
   get rules () {
+
 
     let userID = this.ctx.params.id
     let rule = ''

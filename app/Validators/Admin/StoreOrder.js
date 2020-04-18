@@ -1,6 +1,11 @@
 'use strict'
 
 class AdminStoreOrder {
+
+  get validateAll () {
+    return true
+  }
+
   get rules () {
     return {
     //  validar se um registro existe na tabela na validação
