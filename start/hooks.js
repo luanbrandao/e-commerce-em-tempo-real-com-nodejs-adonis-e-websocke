@@ -2,7 +2,7 @@
  *  valida se um valor existe na base de dados
  */
 
-const { hooks } = require('@adonisjs/fold')
+const { hooks } = require('@adonisjs/ignitor')
 // executa depois dos providers
 hooks.after.providersBooted(() => {
   const Validator = use('Validator')
