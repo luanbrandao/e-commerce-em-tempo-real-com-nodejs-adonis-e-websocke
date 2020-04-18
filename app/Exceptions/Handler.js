@@ -23,7 +23,9 @@ class ExceptionHandler extends BaseExceptionHandler {
 
   //pega a requisição antes de retornar pro usuário
   async handle (error, { request, response }) {
-    response.status(error.status).send(error.message)
+    response.status(error.status).send({
+      error: error.message
+    })
   }
 
   /**
