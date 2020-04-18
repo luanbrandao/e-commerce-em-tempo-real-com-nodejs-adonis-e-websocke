@@ -22,6 +22,7 @@ class CategoryController {
    */
   async index ({ request, response,  pagination  }) {
 
+    // return response.send({message: 'ok'})
     // const page = request.input('page')
     // const limit = request.input('limit')
     // const catagories = await Category.query().paginate(page , limit );

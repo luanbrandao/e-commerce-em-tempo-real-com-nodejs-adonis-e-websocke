@@ -37,4 +37,4 @@ class Discount extends Model {
 
 }
 
-module.exports = DiscountJ
+module.exports = Discount

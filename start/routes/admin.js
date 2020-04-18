@@ -21,9 +21,9 @@ Route.group( () => {
   Route.delete('orders/:id/discount', 'OrderController.removeDiscount')
 
   Route.resource('orders','OrderController').apiOnly()
-  .validator( new Map([
-    [ ['orders.store'] , ['Admin/StoreOrder'] ],
-  ]))
+  // .validator( new Map([
+  //   [ ['orders.store'] , ['Admin/StoreOrder'] ],
+  // ]))
 
   Route.resource('images','ImageController').apiOnly()
 
@@ -39,5 +39,5 @@ Route.group( () => {
 
 .prefix('v1/admin')
 .namespace('Admin')
-.middleware(['auth','is:( admin || manager )'])
+// .middleware(['auth','is:( admin || manager )'])
 

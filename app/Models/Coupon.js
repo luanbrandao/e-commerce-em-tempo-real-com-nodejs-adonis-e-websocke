@@ -29,4 +29,4 @@ class Coupon extends Model {
 
 }
 
-module.exports = Cooupon
+module.exports = Coupon

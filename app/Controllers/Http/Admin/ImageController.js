@@ -27,6 +27,9 @@ class ImageController {
    * @param {View} ctx.view
    */
   async index ({ request, response, pagination }) {
+
+    // return response.send({message : "OK"})
+
     const imagens = await Image.query().orderBy('id','DESC')
     .paginate(pagination.page , pagination.limit)
 
@@ -165,10 +168,13 @@ class ImageController {
     try {
       let filePath = Helpers.publicPath(`uploads/${image.path}`)
 
-      await fs.unlink( filePath , err => {
-        if(!err)
-        await image.delete()
-      })
+      // await fs.unlink( filePath , err => {
+      //   if(!err)
+      //   await image.delete()
+      // })
+
+      await fs.unlinkSync( filePath);
+      await image.delete()
 
       return response.status(204).send()
     } catch (error) {
