@@ -23,9 +23,26 @@ class ExceptionHandler extends BaseExceptionHandler {
 
   //pega a requisição antes de retornar pro usuário
   async handle (error, { request, response }) {
-    response.status(error.status).send({
-      error: error.message
-    })
+    // response.status(error.status).send({
+    //   error: error.message
+    // })
+
+    if (error.name === 'ValidationException') {
+      return response.status(error.status).send({
+        error: error.messages
+      })
+    }
+
+    // if (Env.get('NODE_ENV') === 'development') {
+    //   const youch = new Youch(error, request.request)
+
+    //   const errorJson = await youch.toJSON()
+
+    //   return response.status(error.status).send(errorJson)
+    // }
+
+    return response.status(error.status)
+
   }
 
   /**
