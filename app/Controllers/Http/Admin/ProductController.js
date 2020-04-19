@@ -5,7 +5,8 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 const Product = use('App/Models/Product')
-
+const Database = use('Database')
+const Transformer = use('App/Transformers/Admin/ProductTransformer')
 
 /**
  * Resourceful controller for interacting with products
@@ -21,7 +22,7 @@ class ProductController {
    * @param {View} ctx.view
    */
 
-  async index ({ request, response,  pagination  }) {
+  async index ({ request, response,  pagination, transform  }) {
 
     const  name  = request.input('name')
 
@@ -32,7 +33,10 @@ class ProductController {
       query.where('name', 'ILIKE' , `%${name}%` )
 
     }
-    const products = await query.paginate(pagination.page , pagination.limit );
+
+    var products = await query.paginate(pagination.page , pagination.limit );
+
+    products = await transform.paginate(products , Transformer)
 
     return response.send(products)
 
@@ -47,7 +51,27 @@ class ProductController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store({ request, response, transform }) {
+
+    try {
+
+      const { name , description , price , image_id } = request.all();
+      var product = await Product.create({
+        name,
+        description,
+        price,
+        image_id
+      })
+
+      product = await transform.item( product , Transformer)
+
+      return response
+        .status(201)
+        .send( product )
+    } catch (error) {
+
+      return response.status(error.status).send(error)
+    }
   }
 
   /**
@@ -59,7 +83,24 @@ class ProductController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
+  async show ({ params:{id}, request, response, transform }) {
+
+
+
+
+
+
+
+    try {
+      var product = await Product.findOrFail(id)
+      product = await transform.item(product , Transformer);
+      return response.send(product)
+     } catch (error) {
+       return response.status(404).send({
+         message: 'Produto não foi encontrado!'
+       })
+     }
+
   }
 
 
@@ -71,7 +112,28 @@ class ProductController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update ({ params: { id }, request, response, transform }) {
+
+    try {
+      var product = await Product.findOrFail(id)
+      const { name , description , price , image_id } = request.all();
+      product.merge({
+        name,
+        description,
+        price,
+        image_id
+      })
+      await product.save()
+      product = await transform.item( product , Transformer)
+
+      return response
+        .status(201)
+        .send( product )
+    } catch (error) {
+      return response.status(400).send({
+        message: 'Não foi possível atualizar este produto!'
+      })
+    }
   }
 
   /**
@@ -82,7 +144,19 @@ class ProductController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy ({ params: {id}, response }) {
+
+    try {
+     var product = await Product.findOrFail(id)
+     await product.delete()
+      return response
+        .status(204)
+        .send()
+    } catch (error) {
+      return response.status(400).send({
+        message: 'Não foi possível deletar este produto!'
+      })
+    }
   }
 }
 
