@@ -15,6 +15,13 @@ class CategoryTransformer extends BumblebeeTransformer {
     return ['image']
   }
 
+  // transformers adicionais
+  // availableInclude(){
+  //   return ['posts']
+  // }
+
+
+
   transform (model) {
     return {
      id: model.id,
@@ -28,6 +35,11 @@ class CategoryTransformer extends BumblebeeTransformer {
     // relacionamento do model category com a img
     return this.item(model.getRelated('image') , ImageTransformer)
   }
+
+  // includePosts( model ) {
+  //   // relacionamento do model category com a img
+  //   return this.paginate(model.getRelated('posts' , PostTransformer))
+  // }
 
 }
 
