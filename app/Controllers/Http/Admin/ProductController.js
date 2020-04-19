@@ -1,8 +1,12 @@
 'use strict'
 
+/** @typedef {import('@adonisjs/framework/src/Request')} Request */
+/** @typedef {import('@adonisjs/framework/src/Response')} Response */
+/** @typedef {import('@adonisjs/framework/src/View')} View */
+
 const Product = use('App/Models/Product')
-const Transformer = use('App/Transformers/Product/ProductTransformer')
-const Database = use('Database')
+
+
 /**
  * Resourceful controller for interacting with products
  */
@@ -16,19 +20,24 @@ class ProductController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index({ request, response, transform, pagination }) {
-    const { title } = request.only(['title'])
+
+  async index ({ request, response,  pagination  }) {
+
+    const  name  = request.input('name')
 
     const query = Product.query()
 
-    // Adiciona o where, caso seja solicitado via url params
-    if (title) {
-      query.where('name', 'LIKE', `%${title}%`)
-    }
+    if( name ) {
 
-    const products = await query.paginate(pagination.page, pagination.perpage)
-    return response.send(await transform.paginate(products, Transformer))
+      query.where('name', 'ILIKE' , `%${name}%` )
+
+    }
+    const products = await query.paginate(pagination.page , pagination.limit );
+
+    return response.send(products)
+
   }
+
 
   /**
    * Create/save a new product.
@@ -38,21 +47,7 @@ class ProductController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store({ request, response, transform }) {
-    const transaction = await Database.beginTransaction()
-    try {
-      let product = request.only(['name', 'description', 'price', 'image_id'])
-      const { images } = request.only(['images'])
-      product = await Product.create(product, transaction)
-      await product.images().attach(images, null, transaction)
-      await transaction.commit()
-      return response
-        .status(201)
-        .send(await transform.item(product, Transformer))
-    } catch (error) {
-      await transaction.rollback()
-      return response.status(error.status).send(error)
-    }
+  async store ({ request, response }) {
   }
 
   /**
@@ -64,10 +59,9 @@ class ProductController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show({ params, transform }) {
-    const product = await Product.findOrFail(params.id)
-    return transform.item(product, Transformer)
+  async show ({ params, request, response, view }) {
   }
+
 
   /**
    * Update product details.
@@ -77,21 +71,7 @@ class ProductController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update({ params, request, transform, response }) {
-    const transaction = await Database.beginTransaction()
-    const product = await Product.findOrFail(params.id)
-    try {
-      const data = request.only(['name', 'description', 'price', 'image_id'])
-      const { images } = request.only(['images'])
-      product.merge(data)
-      await product.save(transaction)
-      await product.images().sync(images, null, transaction)
-      await transaction.commit()
-      return transform.item(product, Transformer)
-    } catch (error) {
-      await transaction.rollback()
-      return response.status(error.status).send(error)
-    }
+  async update ({ params, request, response }) {
   }
 
   /**
@@ -102,18 +82,7 @@ class ProductController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy({ params, response }) {
-    const transaction = await Database.beginTransaction()
-    const product = await Product.findOrFail(params.id)
-    try {
-      await product.images().detach(null, transaction)
-      await product.delete(transaction)
-      await transaction.commit()
-      return response.status(204).send()
-    } catch (error) {
-      await transaction.rollback()
-      return response.status(error.status).send(error)
-    }
+  async destroy ({ params, request, response }) {
   }
 }
 

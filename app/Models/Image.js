@@ -12,7 +12,7 @@ class Image extends Model {
   }
   // campo virtual
   getUrl({path})  {
-    return `${Env.get('APP_URL')}/imagens/${path}`
+    return `${Env.get('APP_URL')}/images/${path}`
   }
 
 }

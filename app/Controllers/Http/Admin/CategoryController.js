@@ -1,6 +1,7 @@
 'use strict'
 
 const Category = use('App/Models/Category')
+const Transformer = use('App/Transformers/Admin/CategoryTransformer')
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
@@ -20,7 +21,7 @@ class CategoryController {
    * @param {View} ctx.view
    * @param {Object} ctx.pagination
    */
-  async index ({ request, response,  pagination  }) {
+  async index ({ request, response, transform , pagination  }) {
 
     // return response.send({message: 'ok'})
     // const page = request.input('page')
@@ -36,12 +37,16 @@ class CategoryController {
 
       // no postgres e ILIKE
       query.where('title', 'ILIKE' , `%${title}%` )
+      // query.limit(50);
       // query.whereRaw(`title ILIKE '%Moldova%' `)
 
     }
-    const catagories = await query.paginate(pagination.page , pagination.limit );
+    // const categories = await query.paginate(pagination.page , pagination.limit );
+    var categories = await query.paginate(pagination.page , pagination.limit );
 
-    return response.send(catagories)
+    categories = await transform.paginate(categories,Transformer )
+
+    return response.send(categories)
 
   }
 
