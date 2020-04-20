@@ -66,15 +66,26 @@ class OrderController {
     const trx = await Database.beginTransaction()
     try {
       const { user_id , items , status} = request.all()
+
       var order = await Order.create( { user_id , status} , trx )
+
       const service = new Service( order , trx)
 
-      if( items && items.length > 0) {
-        await service.syncItems(items)
-      }
+      // if( items && items.length > 0) {
+      //   await service.syncItems(items)
+      // }
 
       await trx.commit()
-      order = await transform.item( order , Transformer )
+
+      // dispara os hooks que fazem os cálculos
+      order = await Order.find(order.id);
+
+      // order = await transform.item( order , Transformer )
+      // order = await transform.include('user', 'items').item( order , Transformer )
+      order = await transform.include('user').item( order , Transformer )
+
+
+
       return response.status(201).send(order)
 
     } catch (error) {

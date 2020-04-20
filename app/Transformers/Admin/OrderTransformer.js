@@ -3,7 +3,7 @@
 const BumblebeeTransformer = use('Bumblebee/Transformer')
 const UserTransformer = use('App/Transformers/Admin/UserTransformer')
 const OrderItemTransformer = use('App/Transformers/Admin/OrderItemTransformer')
-const CouponTransformer = use('App/Transformers/Admin/CouponTransformer')
+const CouponTransformer =    use('App/Transformers/Admin/CouponTransformer')
 const DiscountTransformer = use('App/Transformers/Admin/DiscountTransformer')
 /**
  * OrderTransformer class
@@ -15,7 +15,7 @@ class OrderTransformer extends BumblebeeTransformer {
 
   // opcionais
   availableInclude() {
-    return ['user','coupons','items','discounts']
+    return ['user', 'coupons', 'items', 'discounts']
   }
 
   transform (order) {
@@ -35,19 +35,19 @@ class OrderTransformer extends BumblebeeTransformer {
   }
 
   includeUser(order) {
-    return this.item(order.getRelated('user') , UserTransformer)
+    return this.collection(order.getRelated('user'), UserTransformer)
   }
 
   includeItems(order) {
-    return this.item(order.getRelated('items') , OrderItemTransformer)
+    return this.collection(order.getRelated('items') , OrderItemTransformer)
   }
 
   includeCoupons(order) {
-    return this.item(order.getRelated('coupons') , CouponTransformer)
+    return this.collection(order.getRelated('coupons') , CouponTransformer)
   }
 
   includeDiscount(order) {
-    return this.item(order.getRelated('discounts') , DiscountTransformer)
+    return this.collection(order.getRelated('discounts') , DiscountTransformer)
   }
 
 }
