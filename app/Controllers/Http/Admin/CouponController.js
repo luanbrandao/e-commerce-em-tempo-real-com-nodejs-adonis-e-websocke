@@ -7,6 +7,7 @@
 const Coupon = use('App/Models/Coupon')
 const Database = use('Database')
 const Service = use('App/Services/Coupon/CouponService')
+const CouponTransformer = use('App/Transformers/Admin/CouponTransformer')
 /**
  * Resourceful controller for interacting with coupons
  */
@@ -20,17 +21,19 @@ class CouponController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, pagination }) {
+  async index ({ request, response, pagination, transform }) {
 
     const  code  = request.input('code')
 
-    const query = Category.query()
+    const query = Coupon.query()
 
     if( code ) {
       // no postgres e ILIKE
       query.where('code', 'ILIKE' , `%${code}%` )
     }
-    const coupons = await query.paginate(pagination.page , pagination.limit );
+    var coupons = await query.paginate(pagination.page , pagination.limit );
+
+    coupons = await transform.paginate(coupons,CouponTransformer);
 
     return response.send(coupons)
   }
@@ -44,7 +47,7 @@ class CouponController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store ({ request, response, transform }) {
     /**
      *  1 - produto - pode ser utilizado apenas em produtos específicos
      *  2 - clients - pode ser utilizado apenas por clientes específicos
@@ -73,7 +76,7 @@ class CouponController {
        ])
 
        const { users , products } = request.only([ 'users' , 'products' ])
-       const coupon = await Coupon.create( couponData , trx)
+       var coupon = await Coupon.create( couponData , trx)
 
        // starts service layer
        const service = new Service(coupon , trx)
@@ -103,6 +106,7 @@ class CouponController {
 
        await coupon.save(trx)
        await trx.commit()
+       coupon = await transform.paginate(coupons,CouponTransformer);
        return response.status(201).send(coupon)
 
      } catch (error) {
@@ -124,8 +128,9 @@ class CouponController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params: {id }, request, response, view }) {
-    const coupon = await Coupon.findOrFail(id)
+  async show ({ params: {id }, request, response, transform }) {
+    var coupon = await Coupon.findOrFail(id)
+    coupons = await transform.paginate(coupons,CouponTransformer);
     return response.send(coupon)
   }
 
@@ -137,7 +142,7 @@ class CouponController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params: { id }, request, response }) {
+  async update ({ params: { id }, request, response, transform }) {
     const trx = await Database.beginTransaction()
 
     var coupon = await Coupon.findOrFail(id)
@@ -192,6 +197,7 @@ class CouponController {
        await coupon.save(trx);
        await trx.commit()
 
+       coupons = await transform.paginate(coupons,CouponTransformer);
        return response.send(coupon)
 
 
