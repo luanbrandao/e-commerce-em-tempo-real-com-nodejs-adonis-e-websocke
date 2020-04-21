@@ -106,7 +106,9 @@ class CouponController {
 
        await coupon.save(trx)
        await trx.commit()
-       coupon = await transform.paginate(coupons,CouponTransformer);
+       coupon = await transform
+         .include('user','products')
+         .paginate(coupons,CouponTransformer);
        return response.status(201).send(coupon)
 
      } catch (error) {
@@ -130,7 +132,9 @@ class CouponController {
    */
   async show ({ params: {id }, request, response, transform }) {
     var coupon = await Coupon.findOrFail(id)
-    coupons = await transform.paginate(coupons,CouponTransformer);
+    coupons = await transform
+      .include('user,products,orders')
+      .paginate(coupons,CouponTransformer);
     return response.send(coupon)
   }
 
