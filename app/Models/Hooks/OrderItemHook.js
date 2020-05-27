@@ -8,4 +8,5 @@ OrderItemHook.updateSubtotal = async (model) => {
   // evita fraudes
   // pega o items e a quantidade
   model.subtotal = model.quantity * product.price;
+  console.log("subtotal ->",model.subtotal);
 }

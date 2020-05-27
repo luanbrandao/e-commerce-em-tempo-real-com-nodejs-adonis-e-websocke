@@ -14,19 +14,16 @@ class Order extends Model {
   }
 
 // informa que a tabela não tem o campo timesTamp
-  static get traits () {
-    return ['App/Models/Traits/NoTimestamp']
-  }
+  // static get traits () {
+  //   return ['App/Models/Traits/NoTimestamp']
+  // }
 
-  items () {
-    // hasMany, pois 1 pedido pode ter varias orderns,
-    // mas uma ordem só pode pertencer a 1 pedido
-
+  items() {
     return this.hasMany('App/Models/OrderItem')
   }
 
   coupons () {
-    return this.belongsTo('App/Models/Coupon')
+    return this.belongsToMany('App/Models/Coupon')
   }
 
   discounts () {
@@ -36,6 +33,8 @@ class Order extends Model {
   user () {
     return this.belongsTo('App/Models/User', 'user_id' , 'id')
   }
+
+
 
 
 

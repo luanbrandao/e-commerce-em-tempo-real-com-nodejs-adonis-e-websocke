@@ -7,44 +7,61 @@ class OrderSerevice {
     this.trx = trx
   }
 
-  async syncItems( items ) {
 
-    // if( !Array.isArray(items)) {
-    //   return false;
-    // }
+
+    async syncItems(items) {
+
+
+    if( !Array.isArray(items)) {
+      return false;
+    }
 
     await this.model.items().delete(this.trx)
-    return await this.model.items().createMany( items, this.trx )
-    // return true
-
+    return await this.model.items().createMany(items, this.trx)
   }
 
-  // async syncItems(items) {
-  //   await this.model.items().delete(this.trx)
-  //   return await this.model.items().createMany(items, this.trx)
+  // async updateItems( items ) {
+  //   let currentItems = await this.model
+  //   .items()
+  //   .whereIn( 'id' , items.map( item => item.id ))
+  //   .fetch(this.trx)
+
+  //   // deleta os itens que o user não quer mais
+  //   await this.model
+  //   .items()
+  //   .whereIn('id', items.map( item => item.id))
+  //   .delete(this.trx)
+
+  //   // Atualiza os valores e quantidade
+  //   await Promise.all( currentItems.rows.map( async item => {
+  //     //fill, preenche o item
+  //     item.fill( items.find( n => n.id === item.id))
+
+  //     await item.save(this.trx)
+
+  //   }))
+
   // }
 
-  async updateItems( items ) {
+  async updateItems(items) {
     let currentItems = await this.model
-    .items()
-    .whereIn( 'id' , items.map( item => item.id ))
-    .fetch(this.trx)
-
-    // deleta os itens que o user não quer mais
+      .items()
+      .whereIn('id', items.map(item => item.id))
+      .fetch()
+    // Deleta os itens que não estão em `items`
     await this.model
-    .items()
-    .whereIn('id', items.map( item => item.id))
-    .delete(this.trx)
+      .items()
+      .whereNotIn('id', items.map(item => item.id))
+      .delete(this.trx)
 
-    // Atualiza os valores e quantidade
-    await Promise.all( currentItems.rows.map( async item => {
-      //fill, preenche o item
-      item.fill( items.find( n => n.id === item.id))
-
-      await item.save(this.trx)
-
-    }))
-
+    // Atualiza os valores e quantidades dos itens armazenados em `items`
+    await Promise.all(
+      currentItems.rows.map(async item => {
+        //fill, preenche o item
+        item.fill(items.filter(n => n.id === item.id)[0])
+        await item.save(this.trx)
+      })
+    )
   }
 
   async canApplyDiscount( coupon ) {

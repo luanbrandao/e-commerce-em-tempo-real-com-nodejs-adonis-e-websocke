@@ -15,6 +15,7 @@ class OrderItemTransformer extends BumblebeeTransformer {
     return ['product']
   }
 
+
   transform (model) {
     return {
      id: model.id,
@@ -26,6 +27,7 @@ class OrderItemTransformer extends BumblebeeTransformer {
   includeProduct(orderItem) {
     return this.item(orderItem.getRelated('product') , ProductTransformer)
   }
+
 
 }
 

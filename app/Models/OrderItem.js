@@ -11,6 +11,12 @@ class OrderItem extends Model {
     this.addHook('beforeSave', 'OrderItemHook.updateSubtotal')
   }
 
+
+// informa que a tabela não tem o campo timesTamp
+  static get traits () {
+    return ['App/Models/Traits/NoTimestamp']
+  }
+
   product () {
     return this.belongsTo('App/Models/Product')
   }

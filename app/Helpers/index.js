@@ -1,6 +1,6 @@
 
 const crypto = use('crypto')
-const Helpers = use('Helpers')
+// const Helpers = use('Helpers')
 
 /**
  * @param { int } length - O tamanho da string que vocÇe quer gear

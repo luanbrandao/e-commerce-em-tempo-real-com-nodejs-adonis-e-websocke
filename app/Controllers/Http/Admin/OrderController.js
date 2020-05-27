@@ -13,6 +13,7 @@ const Service = use('App/Services/Order/OrderService')
 const Coupon = use('App/Models/Coupon')
 const Discount = use('App/Models/Discount')
 const Order = use('App/Models/Order')
+const OrderItem = use('App/Models/OrderItem')
 const Transformer = use('App/Transformers/Admin/OrderTransformer')
 
 class OrderController {
@@ -63,6 +64,20 @@ class OrderController {
    * @param {Response} ctx.response
    */
   async store ({ request, response, transform }) {
+
+    // try {
+
+
+    //     const order = await OrderItem.create({
+    //     product_id: 1 , quantity: 2, subtotal: 1.0, order_id:27 });
+
+    //     return response.status(201).send(order)
+    //   } catch (error) {
+    //     console.log(error);
+    //     return response.status(400).send(error)
+
+    // }
+
     const trx = await Database.beginTransaction()
     try {
       const { user_id , items , status} = request.all()
@@ -71,18 +86,20 @@ class OrderController {
 
       const service = new Service( order , trx)
 
-      // if( items && items.length > 0) {
-      //   await service.syncItems(items)
-      // }
+      if( items && items.length > 0) {
+        await service.syncItems(items,trx)
+      }
+
+
 
       await trx.commit()
 
       // dispara os hooks que fazem os cálculos
       order = await Order.find(order.id);
 
-      // order = await transform.item( order , Transformer )
-      // order = await transform.include('user', 'items').item( order , Transformer )
-      order = await transform.include('user').item( order , Transformer )
+      order = await transform.item( order , Transformer )
+      // order = await transform.include('user,items').item( order , Transformer )
+      // order = await transform.include('user').item( order , Transformer )
 
 
 
@@ -90,9 +107,10 @@ class OrderController {
 
     } catch (error) {
       await trx.rollback()
-      return response.status(400).send({
-        message: 'Não foi possível criar o pedido no momento'
-      })
+      return response.status(400).send(error)
+      // return response.status(400).send({
+      //   message: 'Não foi possível criar o pedido no momento'
+      // })
     }
   }
 

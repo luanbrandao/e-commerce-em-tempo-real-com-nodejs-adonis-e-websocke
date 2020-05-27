@@ -10,9 +10,9 @@ const ImageTransformer = use('App/Transformers/Admin/ImageTransformer')
  */
 class ProductTransformer extends BumblebeeTransformer {
 
-  static get defaultInclude(){
-    return ['image']
-  }
+  static get defaultInclude() {
+    return ['images', 'image']
+}
 
   transform (model) {
     return {
@@ -23,9 +23,12 @@ class ProductTransformer extends BumblebeeTransformer {
     }
   }
 
-  includeImage( model ) {
-    // relacionamento do model category com a img
-    return this.item(model.getRelated('image') , ImageTransformer)
+  includeImages(product) {
+    return this.collection(product.getRelated('images'), ImageTransformer)
+  }
+
+  includeImage(product) {
+    return this.item(product.getRelated('image'), ImageTransformer)
   }
 }
 
