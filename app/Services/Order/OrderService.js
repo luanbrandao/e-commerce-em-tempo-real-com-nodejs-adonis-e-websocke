@@ -49,6 +49,9 @@ class OrderSerevice {
       .whereIn('id', items.map(item => item.id))
       .fetch()
     // Deleta os itens que não estão em `items`
+    // se o usuário tem os items [1,2,3]
+    // e agora passa só o id 1,
+    // deleta os outros itens.
     await this.model
       .items()
       .whereNotIn('id', items.map(item => item.id))

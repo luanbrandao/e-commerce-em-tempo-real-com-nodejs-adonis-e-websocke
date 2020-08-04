@@ -97,7 +97,7 @@ class OrderController {
       // dispara os hooks que fazem os cálculos
       order = await Order.find(order.id);
 
-      order = await transform.item( order , Transformer )
+      // order = await transform.item( order , Transformer )
       // order = await transform.include('user,items').item( order , Transformer )
       // order = await transform.include('user').item( order , Transformer )
 
